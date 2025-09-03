@@ -8,7 +8,6 @@
   --on-duty-bg: #dbf4ff;
   --on-duty-border: #38bdf8;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #1f2937;
@@ -32,21 +31,16 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
-  min-height: 100vh;       /* заменили height:100% на min-height */
-  overflow-y: auto;        /* разрешаем прокрутку */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overflow-x: hidden;
 }
 
 .app {
   max-width: 640px;
   margin: 0 auto;
   padding: 1rem;
-  min-height: 100vh;       /* заставляем контейнер занимать всю высоту */
-  display: flex;
-  flex-direction: column;
 }
 
 .header {
@@ -87,12 +81,6 @@ html, body {
   animation: fadeIn 0.6s ease forwards;
 }
 
-main {
-  flex: 1;                  /* растягиваем main чтобы занимал всё пространство под header */
-  padding-bottom: 2rem;     /* дополнительный нижний отступ для комфортного скролла */
-  overflow-y: auto;         /* подстраховка для слишком длинного контента */
-}
-
 /* Сетка карточек */
 .grid {
   display: grid;
@@ -114,7 +102,7 @@ main {
   opacity: 0;
   transform: translateY(12px);
   animation: fadeInUp 0.5s ease forwards;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: background .2s, transform .2s, box-shadow .2s;
 }
 
 .card:hover {
@@ -143,24 +131,21 @@ input[type="checkbox"] {
   accent-color: var(--accent);
 }
 
-/* Анимации */
+/* Плавные keyframes */
 @keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
 @keyframes fadeIn {
   to { opacity: 1; }
 }
-
 @keyframes pulse {
   50% { transform: scale(1.05); }
 }
 
-
-/* Зведена статистика */
+/* Секция статистики */
 .summary {
   animation: fadeIn 0.8s ease forwards;
 }
@@ -177,11 +162,7 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  /* если статистики много — делаем её прокручиваемой внутри main */
-  max-height: 50vh;
-  overflow-y: auto;
-  padding-right: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .summary-row {
@@ -222,9 +203,8 @@ input[type="checkbox"] {
   text-align: right;
 }
 
-/* Мобильная под Android/iOS */
+/* Мобильная оптимизация */
 @media (max-width: 500px) {
-  .app { padding: 0.75rem; }
   .title { font-size: 1.75rem; }
   .grid { gap: 0.5rem; }
   .card { padding: 0.6rem; }
