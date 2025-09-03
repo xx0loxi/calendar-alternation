@@ -32,16 +32,21 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
-  width: 100%;
-  height: 100%;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-           env(safe-area-inset-bottom) env(safe-area-inset-left);
+  min-height: 100vh;       /* заменили height:100% на min-height */
+  overflow-y: auto;        /* разрешаем прокрутку */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .app {
   max-width: 640px;
   margin: 0 auto;
   padding: 1rem;
+  min-height: 100vh;       /* заставляем контейнер занимать всю высоту */
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -80,6 +85,12 @@ html, body {
   color: var(--muted);
   opacity: 0;
   animation: fadeIn 0.6s ease forwards;
+}
+
+main {
+  flex: 1;                  /* растягиваем main чтобы занимал всё пространство под header */
+  padding-bottom: 2rem;     /* дополнительный нижний отступ для комфортного скролла */
+  overflow-y: auto;         /* подстраховка для слишком длинного контента */
 }
 
 /* Сетка карточек */
@@ -132,7 +143,7 @@ input[type="checkbox"] {
   accent-color: var(--accent);
 }
 
-/* Анімації */
+/* Анимации */
 @keyframes fadeInUp {
   to {
     opacity: 1;
@@ -166,6 +177,11 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  /* если статистики много — делаем её прокручиваемой внутри main */
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
 .summary-row {
@@ -180,6 +196,7 @@ input[type="checkbox"] {
   width: 140px;
   font-weight: 500;
   color: var(--text);
+  flex-shrink: 0;
 }
 
 .summary-bar {
@@ -205,7 +222,7 @@ input[type="checkbox"] {
   text-align: right;
 }
 
-/* Мобільна під Android/iOS */
+/* Мобильная под Android/iOS */
 @media (max-width: 500px) {
   .app { padding: 0.75rem; }
   .title { font-size: 1.75rem; }
