@@ -8,25 +8,24 @@ const NAMES = [
   "Сердюк Станіслав","Слиньок Матвій","Терещенко Денис","Хоменко Олександр"
 ];
 
-// Ключ у localStorage
 const STORAGE_KEY = 'duties';
-let duties = {};                 // { 'YYYY-MM-DD': { name: true, ... }, ... }
+let duties = {};           // { 'YYYY-MM-DD': { name: true, … }, … }
 let selectedDate = getTodayISO();
 
-// DOM-елементи
+// DOM
 const dutyListEl   = document.getElementById('dutyList');
 const currentDateEl= document.getElementById('currentDate');
 const datePickerEl = document.getElementById('datePicker');
 const summaryEl    = document.getElementById('summaryChart');
 
-// Ініціалізація datePicker
+// Инициализация datePicker
 datePickerEl.value = selectedDate;
 datePickerEl.addEventListener('change', () => {
   selectedDate = datePickerEl.value || getTodayISO();
   renderList();
 });
 
-// Утиліти дати
+// Утилиты для даты
 function getTodayISO() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -35,7 +34,7 @@ function formatDate(iso) {
   return `${d}.${m}.${y}`;
 }
 
-// Завантаження / збереження
+// LocalStorage
 function loadData() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) duties = JSON.parse(saved);
@@ -44,14 +43,14 @@ function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(duties));
 }
 
-// Рендер списку дежурних
+// Рендер списка дежурных
 function renderList() {
-  const data = duties[selectedDate] || {};
+  const dayData = duties[selectedDate] || {};
   currentDateEl.textContent = `На ${formatDate(selectedDate)}`;
   dutyListEl.innerHTML = '';
 
-  NAMES.forEach((name, i) => {
-    const onDuty = !!data[name];
+  NAMES.forEach((name,i) => {
+    const onDuty = !!dayData[name];
     const card = document.createElement('div');
     card.className = 'card' + (onDuty ? ' on-duty' : '');
     card.style.animationDelay = `${i * 0.03}s`;
@@ -73,7 +72,7 @@ function renderList() {
   renderSummary();
 }
 
-// Перемикання чергування
+// Переключение дежурства
 function toggleDuty(name) {
   if (!duties[selectedDate]) duties[selectedDate] = {};
   duties[selectedDate][name] = !duties[selectedDate][name];
@@ -81,17 +80,17 @@ function toggleDuty(name) {
   renderList();
 }
 
-// Рендер зведеної статистики
+// Рендер суммарной статистики
 function renderSummary() {
-  // Підрахунок
-  const counts = NAMES.reduce((acc, n) => (acc[n] = 0, acc), {});
+  // Считаем для каждого name
+  const counts = NAMES.reduce((acc,n) => (acc[n]=0,acc), {});
   Object.values(duties).forEach(day => {
     NAMES.forEach(n => { if (day[n]) counts[n]++; });
   });
-  const max = Math.max(...Object.values(counts), 1);
+  const maxCount = Math.max(...Object.values(counts), 1);
 
   summaryEl.innerHTML = '';
-  NAMES.forEach((name, i) => {
+  NAMES.forEach((name,i) => {
     const cnt = counts[name];
     const row = document.createElement('div');
     row.className = 'summary-row';
@@ -105,16 +104,15 @@ function renderSummary() {
     bar.className = 'summary-bar';
     const fill = document.createElement('div');
     fill.className = 'summary-bar-fill';
-    // встановлюємо ширину з transition
+    // даём время браузеру отрисовать, потом меняем ширину
     setTimeout(() => {
-      fill.style.width = `${(cnt / max) * 100}%`;
-    }, 100 + i * 50);
+      fill.style.width = `${(cnt / maxCount) * 100}%`;
+    }, 50 + i * 30);
 
     bar.append(fill);
 
     const countEl = document.createElement('div');
     countEl.className = 'summary-count';
-    // анімація лічильника
     animateCount(countEl, cnt, 800);
 
     row.append(nameEl, bar, countEl);
@@ -122,36 +120,33 @@ function renderSummary() {
   });
 }
 
-// Анімація числа від 0 до toValue за duration мс
-function animateCount(el, toValue, duration) {
-  if (toValue === 0) {
-    el.textContent = '0';
-    return;
-  }
+// Анимация счётчика
+function animateCount(el, to, duration) {
   let start = 0;
-  const stepTime = Math.max(Math.floor(duration / toValue), 20);
+  el.textContent = '0';
+  const step = Math.max(Math.floor(duration / (to || 1)), 20);
   const timer = setInterval(() => {
     start++;
     el.textContent = start;
-    if (start >= toValue) clearInterval(timer);
-  }, stepTime);
+    if (start >= to) clearInterval(timer);
+  }, step);
 }
 
-// Після переходу опівночі оновлюємо дату
-function scheduleMidnightReload() {
+// Перезагрузка после полуночи
+function scheduleReload() {
   const now = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0,0,1);
+  const next = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,1);
   setTimeout(() => {
     selectedDate = getTodayISO();
     datePickerEl.value = selectedDate;
     renderList();
-    scheduleMidnightReload();
+    scheduleReload();
   }, next - now);
 }
 
-// Старт
+// Стартуем
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
   renderList();
-  scheduleMidnightReload();
+  scheduleReload();
 });
