@@ -87,7 +87,7 @@ function renderSummary() {
   Object.values(duties).forEach(day => {
     NAMES.forEach(n => { if (day[n]) counts[n]++; });
   });
-  const maxCount = Math.max(...Object.values(counts), 0);
+  const maxCount = Math.max(...Object.values(counts), 1);
 
   summaryEl.innerHTML = '';
   NAMES.forEach((name,i) => {
@@ -124,7 +124,7 @@ function renderSummary() {
 function animateCount(el, to, duration) {
   let start = 0;
   el.textContent = '0';
-  const step = Math.max(Math.floor(duration / (to || 1)), 20);
+  const step = Math.max(Math.floor(duration / (to || 0)), 20);
   const timer = setInterval(() => {
     start++;
     el.textContent = start;
@@ -150,4 +150,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderList();
   scheduleReload();
 });
+
 
