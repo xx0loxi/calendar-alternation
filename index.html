@@ -1,23 +1,39 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
   <title>Чергування</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app">
     <header class="header">
       <h1 class="title">Чергування</h1>
+
+      <!-- Вибір дати -->
+      <div class="date-picker">
+        <input type="date" id="datePicker">
+      </div>
+
+      <!-- Поточна дата -->
       <p id="currentDate" class="date"></p>
     </header>
+
     <main>
+      <!-- Список дежурних на обрану дату -->
       <div id="dutyList" class="grid"></div>
+
+      <!-- Зведена статистика -->
+      <section class="summary">
+        <h2 class="summary-title">Загальна статистика чергувань</h2>
+        <div id="summaryChart" class="summary-chart"></div>
+      </section>
     </main>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
