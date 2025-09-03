@@ -10,28 +10,30 @@
 </head>
 <body>
   <div class="app">
+
     <header class="header">
       <h1 class="title">Чергування</h1>
 
-      <!-- Вибір дати -->
+      <!-- Поле вибору дати -->
       <div class="date-picker">
         <input type="date" id="datePicker">
       </div>
 
-      <!-- Поточна дата -->
+      <!-- Отображение текущей/выбранной даты -->
       <p id="currentDate" class="date"></p>
     </header>
 
     <main>
-      <!-- Список дежурних на обрану дату -->
+      <!-- Список дежурных на выбранную дату -->
       <div id="dutyList" class="grid"></div>
 
-      <!-- Зведена статистика -->
+      <!-- Только статистика -->
       <section class="summary">
         <h2 class="summary-title">Загальна статистика чергувань</h2>
         <div id="summaryChart" class="summary-chart"></div>
       </section>
     </main>
+
   </div>
 
   <script src="script.js"></script>
