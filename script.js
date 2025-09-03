@@ -9,14 +9,14 @@ const NAMES = [
 ];
 
 const STORAGE_KEY = 'duties';
-let duties = {};           // { 'YYYY-MM-DD': { name: true, … }, … }
+let duties = {};           
 let selectedDate = getTodayISO();
 
-// DOM
-const dutyListEl   = document.getElementById('dutyList');
-const currentDateEl= document.getElementById('currentDate');
-const datePickerEl = document.getElementById('datePicker');
-const summaryEl    = document.getElementById('summaryChart');
+// DOM-елементи
+const dutyListEl    = document.getElementById('dutyList');
+const currentDateEl = document.getElementById('currentDate');
+const datePickerEl  = document.getElementById('datePicker');
+const summaryEl     = document.getElementById('summaryChart');
 
 // Инициализация datePicker
 datePickerEl.value = selectedDate;
@@ -49,7 +49,7 @@ function renderList() {
   currentDateEl.textContent = `На ${formatDate(selectedDate)}`;
   dutyListEl.innerHTML = '';
 
-  NAMES.forEach((name,i) => {
+  NAMES.forEach((name, i) => {
     const onDuty = !!dayData[name];
     const card = document.createElement('div');
     card.className = 'card' + (onDuty ? ' on-duty' : '');
@@ -82,15 +82,15 @@ function toggleDuty(name) {
 
 // Рендер суммарной статистики
 function renderSummary() {
-  // Считаем для каждого name
-  const counts = NAMES.reduce((acc,n) => (acc[n]=0,acc), {});
+  // Подсчёт для каждого
+  const counts = NAMES.reduce((acc, n) => (acc[n] = 0, acc), {});
   Object.values(duties).forEach(day => {
     NAMES.forEach(n => { if (day[n]) counts[n]++; });
   });
   const maxCount = Math.max(...Object.values(counts), 1);
 
   summaryEl.innerHTML = '';
-  NAMES.forEach((name,i) => {
+  NAMES.forEach((name, i) => {
     const cnt = counts[name];
     const row = document.createElement('div');
     row.className = 'summary-row';
@@ -104,11 +104,9 @@ function renderSummary() {
     bar.className = 'summary-bar';
     const fill = document.createElement('div');
     fill.className = 'summary-bar-fill';
-    // даём время браузеру отрисовать, потом меняем ширину
     setTimeout(() => {
       fill.style.width = `${(cnt / maxCount) * 100}%`;
     }, 50 + i * 30);
-
     bar.append(fill);
 
     const countEl = document.createElement('div');
@@ -120,22 +118,28 @@ function renderSummary() {
   });
 }
 
-// Анимация счётчика
+// Анимация числа от 0 до to за duration мс
 function animateCount(el, to, duration) {
-  let start = 0;
+  // Если значение нулевое — сразу ставим "0" и выходим
+  if (to === 0) {
+    el.textContent = '0';
+    return;
+  }
+
+  let current = 0;
   el.textContent = '0';
-  const step = Math.max(Math.floor(duration / (to || 0)), 20);
+  const step = Math.max(Math.floor(duration / to), 20);
   const timer = setInterval(() => {
-    start++;
-    el.textContent = start;
-    if (start >= to) clearInterval(timer);
+    current++;
+    el.textContent = current;
+    if (current >= to) clearInterval(timer);
   }, step);
 }
 
-// Перезагрузка после полуночи
+// Перезапуск после полуночи
 function scheduleReload() {
-  const now = new Date();
-  const next = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,1);
+  const now  = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
   setTimeout(() => {
     selectedDate = getTodayISO();
     datePickerEl.value = selectedDate;
@@ -144,11 +148,9 @@ function scheduleReload() {
   }, next - now);
 }
 
-// Стартуем
+// Старт
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
   renderList();
   scheduleReload();
 });
-
-
