@@ -87,7 +87,7 @@ function renderSummary() {
   Object.values(duties).forEach(day => {
     NAMES.forEach(n => { if (day[n]) counts[n]++; });
   });
-  const maxCount = Math.max(...Object.values(counts), 1);
+  const maxCount = Math.max(...Object.values(counts), 0);
 
   summaryEl.innerHTML = '';
   NAMES.forEach((name,i) => {
@@ -150,3 +150,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderList();
   scheduleReload();
 });
+
